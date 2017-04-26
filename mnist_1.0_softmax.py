@@ -47,12 +47,31 @@ W = tf.Variable(tf.zeros([784, 10]))
 # biases b[10]
 b = tf.Variable(tf.zeros([10]))
 
+
+# Additional weights matrix and an additional bias vector for the intermediate layer
+
+W1 = tf.Variable(tf.truncated_normal([28*28, 200], stddev=0.1))
+B1 = tf.Variable(tf.zeros([200]))
+
+W2 = tf.Variable(tf.truncated_normal([200, 10], stddev=0.1))
+B2 = tf.Variable(tf.zeros([10]))
+
+XX = tf.reshape(X, [-1, 28*28])
+
+Y1 = tf.nn.sigmoid(tf.matmul(XX, W1) + B1)
+Y = tf.nn.softmax(tf.matmul(Y1, W2) + B2)
+
+
+
+
 # flatten the images into a single line of pixels
 # -1 in the shape definition means "the only possible dimension that will preserve the number of elements"
-XX = tf.reshape(X, [-1, 784])
+#XX = tf.reshape(X, [-1, 784])
 
 # The model
-Y = tf.nn.softmax(tf.matmul(XX, W) + b)
+#Y = tf.nn.softmax(tf.matmul(XX, W) + b)
+
+
 
 # loss function: cross-entropy = - sum( Y_i * log(Yi) )
 #                           Y: the computed output vector
@@ -116,6 +135,10 @@ datavis.animate(training_step, iterations=2000+1, train_data_update_freq=10, tes
 # to disable the visualisation use the following line instead of the datavis.animate line
 # for i in range(2000+1): training_step(i, i % 50 == 0, i % 10 == 0)
 
+for i in range(2000+1):
+    training_step(i, i % 50 == 0, i % 10 == 0)
+
 print("max test accuracy: " + str(datavis.get_max_test_accuracy()))
+
 
 # final max test accuracy = 0.9268 (10K iterations). Accuracy should peak above 0.92 in the first 2000 iterations.
